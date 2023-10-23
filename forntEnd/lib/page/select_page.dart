@@ -1,90 +1,75 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
-import 'package:get/get.dart';
+//import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-// final picker = ImagePicker();
-// XFile? image; 
-// List<XFile?> multiImage = []; 
-// List<XFile?> images = []; 
-
-class SelectPage extends StatelessWidget {
+class SelectPage extends StatefulWidget {
   const SelectPage({super.key});
 
   @override
+  State<SelectPage> createState() => _SelectPageState();
+}
+
+class _SelectPageState extends State<SelectPage> {
+  XFile? _image;
+  final ImagePicker picker = ImagePicker();
+
+  Future getImage(ImageSource imageSource) async {
+    final XFile? pickedFile = await picker.pickImage(source: imageSource);
+    if(pickedFile != null) {
+      setState(() {
+        _image = XFile(pickedFile.path);
+      }); 
+    }
+  }
+  @override
   Widget build(BuildContext context) {
-    
-    final cameraButton = Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
-          padding: const EdgeInsets.all(15),
-          backgroundColor: const Color.fromARGB(255, 141, 245, 120)
+    return MaterialApp(
+      home: Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildPhotoArea(),
+            const SizedBox(height: 80),
+            _buildButton()
+          ],
+        )
+      ),
+    );
+  }
+
+  Widget _buildPhotoArea() {
+    return _image != null ? SizedBox(
+      width: 300,
+      height: 300,
+      child: Image.file(File(_image!.path)),
+    ) : Container(
+      width: 300,
+      height: 300,
+      color: Colors.purple,
+    );
+  }
+
+  Widget _buildButton() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        FloatingActionButton(
+          onPressed: () {
+            getImage(ImageSource.camera);
+          },
+          heroTag: 'image0',
+          child: const Icon(Icons.camera),
         ),
-        onPressed: () {
-          //getImage(ImageSource.camera);   //obx사용해야됨
-        },
-        child: const Text('카메라 열기', style: TextStyle(color: Colors.black)),
-      ),
-      );
-    // Container(
-    //   margin:  EdgeInsets.all(10),
-    //   padding: EdgeInsets.all(5),
-    //   decoration: BoxDecoration(
-    //     color: Colors.lightBlueAccent,
-    //     borderRadius: BorderRadius.circular(24),
-    //     boxShadow: [
-    //       BoxShadow(
-    //         color: Colors.grey.withOpacity(0.5),
-    //         spreadRadius: 0.5,
-    //         blurRadius: 5
-    //       )
-    //     ],
-    //   ),
-    //   child: IconButton(
-    //     onPressed: () async {
-
-    //     },
-    //     icon: Icon(Icon.),
-    //   ),
-    // );
-
-
-      final imageButton= Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
-          padding: const EdgeInsets.all(15),
-          backgroundColor: const Color.fromARGB(255, 141, 245, 120)
-        ),
-        onPressed: () {
-
-        },
-        child: const Text('갤러리 열기', style: TextStyle(color: Colors.black)),
-      ),
-      );
-
-    
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        children: <Widget>[
-          const Expanded(
-            child: Center(child: null),
-          ),
-          cameraButton,
-          const Padding(padding: EdgeInsets.only(bottom: 5)),
-          imageButton,
-          const Padding(padding: EdgeInsets.only(bottom: 90)),
-        ],
-      ),
+        const SizedBox(width: 30),
+        FloatingActionButton(
+          onPressed: () {
+            getImage(ImageSource.gallery);
+          },
+          heroTag: 'image1',
+          child: const Icon(Icons.photo_album),
+        ) 
+      ],
     );
   }
 }

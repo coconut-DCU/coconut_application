@@ -14,7 +14,7 @@ class StartPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(25),
           ),
           padding: const EdgeInsets.all(15),
-          backgroundColor: const Color.fromARGB(255, 141, 245, 120)
+          backgroundColor: const Color.fromARGB(255, 205, 127, 196)
         ),
         onPressed:() => Get.toNamed('/select'),
         child: const Text('시작하기', style: TextStyle(color: Colors.black)),
